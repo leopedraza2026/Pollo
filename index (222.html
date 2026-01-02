@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Menú - Restaurante</title>
+  <style>
+    :root{
+      --accent:#ff6f00;
+      --muted:#666;
+      --card:#fff;
+      --bg:#f6f7f9;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:#222;
+      padding:20px;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+    }
+    header{
+      grid-column: 1 / -1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:6px;
+    }
+    h1{font-size:20px;margin:0}
+    .sub{color:var(--muted);font-size:13px}
+    .menu-card, .cart-card{
+      background:var(--card);
+      border-radius:8px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+    .categories{
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .cat-btn{
+      border:1px solid #e6e6e6;
+      padding:8px 10px;
+      border-radius:6px;
+      background:white;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .cat-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
+    .items{
+      display:grid;
+      grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+      gap:12px;
+    }
+    .item{
+      border:1px solid #eee;
+      padding:10px;
+      border-radius:8px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .item .info{flex:1}
+    .item h3{margin:0;font-size:16px}
+    .price{color:var(--accent);font-weight:700}
+    .add-btn{
+      background:var(--accent);
+      color:white;
+      padding:6px 10px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
+    }
+    /* Cart */
+    .cart-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .cart-items{max-height:360px;overflow:auto;margin-bottom:12px}
+    .cart-row{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px dashed #f0f0f0}
+    .qty-controls button{padding:4px 8px;border-radius:4px;border:1px solid #ddd;background:white;cursor:pointer}
+    .cart-empty{color:var(--muted);padding:8px}
+    .summary{display:flex;justify-content:space-between;font-weight:700;margin-top:8px}
+    label.row{display:flex;flex-direction:column;margin-bottom:8px;font-size:14px}
+    input[type="text"], select{
+      padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;
+    }
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .btn{padding:8px 10px;border-radius:6px;border:none;cursor:pointer}
+    .btn.primary{background:var(--accent);color:white}
+    .btn.ghost{background:white;border:1px solid #ddd}
+    .orders-list{margin-top:12px}
+    .order-card{background:#fff;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #f0f0f0}
+    .order-meta{font-size:13px;color:var(--muted);display:flex;justify-content:space-between}
+    .small{font-size:13px;color:var(--muted)}
+    footer{grid-column:1 / -1;margin-top:12px;color:var(--muted);font-size:13px}
+    @media(max-width:980px){
+      .wrap{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>📋 Menú - Pollería</h1>
+        <div class="sub">Elige productos, agrega al pedido y guarda</div>
+      </div>
+      <div class="sub">Usuario: <strong>leopedraza2026</strong></div>
+    </header>
+
+    <section class="menu-card" id="menuCard">
+      <div class="categories" id="categories"></div>
+      <div class="items" id="items"></div>
+    </section>
+
+    <aside class="cart-card" id="cartCard">
+      <div class="cart-header">
+        <div>
+          <strong>🧾 Pedido</strong>
+          <div class="small">Agrega productos desde el menú</div>
+        </div>
+        <div class="small" id="itemsCount">0 items</div>
+      </div>
+
+      <div class="cart-items" id="cartItems">
+        <div class="cart-empty">El carrito está vacío.</div>
+      </div>
+
+      <div class="summary">
+        <div>Total:</div>
+        <div id="totalPay">$0.00</div>
+      </div>
+
+      <hr style="margin-top:12px;border:none;border-top:1px solid #f0f0f0" />
+
+      <label class="row">👤 Nombre del cliente
+        <input type="text" id="customerName" placeholder="Ej. María Pérez" />
+      </label>
+
+      <div style="margin-bottom:8px">
+        <div style="font-size:14px;margin-bottom:6px">🍽️ Tipo de pedido</div>
+        <label style="margin-right:8px"><input type="radio" name="orderType" value="Para llevar" checked/> Para llevar</label>
+        <label style="margin-right:8px"><input type="radio" name="orderType" value="Comer aquí"/> Comer aquí</label>
+        <label><input type="radio" name="orderType" value="Delivery"/> Delivery</label>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="saveOrderBtn">💾 Guardar pedido</button>
+        <button class="btn ghost" id="clearCartBtn">🗑️ Limpiar pedido</button>
+      </div>
+
+      <section class="orders-list" id="ordersList">
+        <h4 style="margin-top:12px;margin-bottom:8px">📦 Pedidos guardados</h4>
+        <div class="small" id="noOrders">No hay pedidos guardados.</div>
+      </section>
+    </aside>
+
+    <footer>
+      Consejo: los pedidos se guardan en tu navegador (localStorage). Puedes exportarlos o integrar backend según necesites.
+    </footer>
+  </div>
+
+  <script>
+    /* Datos del menú (puedes
